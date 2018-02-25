@@ -29,8 +29,8 @@ def window_transform_series(series, window_size):
 # TODO: build an RNN to perform regression on our time series input/output data
 def build_part1_RNN(window_size, lstm_units = 5, dropout = 0.2):
     model = Sequential()
-    model.add(LSTM(lstm_units, input_shape=(window_size,1), dropout=dropout, return_sequences=True))
-    model.add(LSTM(lstm_units, dropout=dropout))
+    model.add(LSTM(lstm_units, activation='tanh', input_shape=(window_size,1), dropout=dropout, return_sequences=True))
+    model.add(LSTM(lstm_units, activation='tanh', dropout=dropout))
     model.add(Dense(1, activation="tanh"))
 
     return model
@@ -38,9 +38,17 @@ def build_part1_RNN(window_size, lstm_units = 5, dropout = 0.2):
 
 ### TODO: return the text input with only ascii lowercase and the punctuation given below included.
 def cleaned_text(text):
-    punctuation = ['!', ',', '.', ':', ';', '?']
-    text = ''.join([c if c not in punctuation else ' ' for c in text])
+    text = ''.join([c if should_retain(c) else ' ' for c in text])
     return text
+
+
+def should_retain(char):
+    punctuation = ['!', ',', '.', ':', ';', '?']
+    alpha = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+    if (char in punctuation) or (char in alpha) or (char == " "):
+        return True
+    else:
+        return False
 
 ### TODO: fill out the function below that transforms the input text and window-size into a set of input/output pairs for use with our RNN model
 def window_transform_text(text, window_size, step_size):
@@ -60,10 +68,10 @@ def window_transform_text(text, window_size, step_size):
 # TODO build the required RNN model: 
 # a single LSTM hidden layer with softmax activation, categorical_crossentropy loss 
 def build_part2_RNN(window_size, num_chars, lstm_units=200, dropout=0.2):
-    model = Sequential()
-    model.add(LSTM(lstm_units, input_shape=(window_size,num_chars), dropout=dropout, return_sequences=True))
-    model.add(LSTM(lstm_units, dropout=dropout))
-    model.add(Dense(num_chars))
-    model.add(Activation('softmax'))
+    sher_model = Sequential()
+    sher_model.add(LSTM(lstm_units, activation='tanh', input_shape=(window_size,num_chars), dropout=dropout, return_sequences=True))
+    sher_model.add(LSTM(lstm_units, activation='tanh', dropout=dropout))
+    sher_model.add(Dense(num_chars))
+    sher_model.add(Activation('softmax'))
 
-    return model
+    return sher_model
