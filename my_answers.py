@@ -29,8 +29,8 @@ def window_transform_series(series, window_size):
 # TODO: build an RNN to perform regression on our time series input/output data
 def build_part1_RNN(window_size, lstm_units = 5, dropout = 0.2):
     model = Sequential()
-    model.add(LSTM(lstm_units, activation='tanh', input_shape=(window_size,1), dropout=dropout, return_sequences=True))
-    model.add(LSTM(lstm_units, activation='tanh', dropout=dropout))
+    model.add(LSTM(lstm_units, input_shape=(window_size,1)))
+    # model.add(LSTM(lstm_units, activation='tanh', dropout=dropout))
     model.add(Dense(1, activation="tanh"))
 
     return model
@@ -56,12 +56,13 @@ def window_transform_text(text, window_size, step_size):
     inputs = []
     outputs = []
 
-    no_complete_window = (len(text) - window_size) // step_size
-    last_complete_window = (no_complete_window + 1) * step_size
-
-    for i in range(0, last_complete_window, step_size):
+    last_complete_window = len(text) - window_size
+    i = 0
+    
+    while i < last_complete_window:
         inputs.append(text[i:i+window_size])
         outputs.append(text[i+window_size])
+        i = i + step_size
 
     return inputs,outputs
 
@@ -69,8 +70,8 @@ def window_transform_text(text, window_size, step_size):
 # a single LSTM hidden layer with softmax activation, categorical_crossentropy loss 
 def build_part2_RNN(window_size, num_chars, lstm_units=200, dropout=0.2):
     sher_model = Sequential()
-    sher_model.add(LSTM(lstm_units, activation='tanh', input_shape=(window_size,num_chars), dropout=dropout, return_sequences=True))
-    sher_model.add(LSTM(lstm_units, activation='tanh', dropout=dropout))
+    sher_model.add(LSTM(lstm_units, input_shape=(window_size,num_chars)))
+    # sher_model.add(LSTM(lstm_units, activation='tanh', dropout=dropout))
     sher_model.add(Dense(num_chars))
     sher_model.add(Activation('softmax'))
 
